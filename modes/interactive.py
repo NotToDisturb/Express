@@ -4,7 +4,7 @@ from PIL import Image, ImageGrab
 
 from graph import DeliveryVerse
 from parsing import DeliveryParser
-from modes.queries import query_deliveries_per_location, query_deliveries_per_package, query_optimal_route
+from modes.queries import query_show_deliveries_per_location, query_show_deliveries_per_package, query_show_optimal_route
 
 # TODO: Allow retake and cancel of screenshots, showing detected packages
 
@@ -26,7 +26,7 @@ def images_from_storage():
     images = []
     path = input("[INPUT] Enter a folder path: ")
     while not os.path.exists(path):
-        path = input("[INPUT] Path does not exist, enter a folder path:")
+        path = input("[INPUT] Path does not exist, enter a folder path: ")
     for file in os.listdir(path):
         images.append(Image.open(f"{path}/{file}"))
     return images
@@ -53,9 +53,9 @@ def show_queries():
 
 def select_query(verse):
     input_functions = {
-        "1": query_deliveries_per_location,
-        "2": query_deliveries_per_package,
-        "3": query_optimal_route,
+        "1": query_show_deliveries_per_package,
+        "2": query_show_deliveries_per_location,
+        "3": query_show_optimal_route,
         "4": query_exit
     }
     print("[INPUT] What query would you like to make?")
@@ -66,11 +66,13 @@ def select_query(verse):
         print("[INPUT] Would you like to make another query?")
         show_queries()
         selection = input("    Enter a number: ")
+        input_functions[selection](verse)
 
-def execute_mode(options: dict):
+def execute_mode(_: dict):
     verse = DeliveryVerse()
     images = select_images()
     parser = DeliveryParser(verse)
-    parser.detect_deliveries(images)
+    for index in range(len(images)):
+        parser.detect_deliveries(index, images[index])
     verse.build_graph()
     select_query(verse)

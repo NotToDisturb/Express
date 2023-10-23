@@ -1,6 +1,7 @@
 import sys
 import getopt
 
+import modes.gui as gui
 import modes.command as command
 import modes.interactive as interactive
 
@@ -10,18 +11,15 @@ def mode_help(_: dict):
     print("                < -h | --help   >    Displays this message (optional, overrides --mode)")
     print("                < -m | --mode   >    Selects the mode under which Express will run (optional)")
     print("                                      - command:     CLI that takes all input upfront")
-    print("                                      - interactive: CLI that asks the user for input as it executes")
-    print("                                      - gui:         A graphical interface for Express (default, NOT IMPLEMENTED)")
+    print("                                      - interactive: CLI that asks the user for input as it executes (default)")
+    print("                                      - gui:         A graphical interface for Express (NOT IMPLEMENTED)")
     print("                                      - help:        Displays this message")
     print("                < -p | --path   >    Path to the images (mandatory if in 'command' mode, else not used)")
     print("                < -q | --query  >    Number of the query (mandatory if in 'command' mode, else not used)")
-    print("                                      1. Print packages")
-    print("                                      2. Print packages per location")
-    print("                                      3. Print optimal route")
+    print("                                      1. Show packages")
+    print("                                      2. Show packages per location")
+    print("                                      3. Show optimal route")
     print("                < -o | --output >    Path where the results of the selected query are stored in JSON format (NOT IMPLEMENTED)")
-
-def mode_gui(_: dict):
-    print("TODO")
 
 def main(args):
     opts, _ = getopt.getopt(args,"hm:p:q:o:",["mode=","path=","query=","output="])
@@ -48,8 +46,8 @@ def main(args):
         "help": mode_help,
         "command": command.execute_mode,
         "interactive": interactive.execute_mode,
-        "gui": mode_gui,
-        None: mode_gui
+        "gui": gui.execute_mode,
+        None: interactive.execute_mode
     }
     mode_mapper[options["mode"]](options)
 

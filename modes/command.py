@@ -3,7 +3,7 @@ from PIL import Image
 
 from graph import DeliveryVerse
 from parsing import DeliveryParser
-from modes.queries import query_deliveries_per_location, query_deliveries_per_package, query_optimal_route
+from modes.queries import query_show_deliveries_per_location, query_show_deliveries_per_package, query_show_optimal_route
 
 def images_from_storage(path):
     images = []
@@ -14,18 +14,38 @@ def images_from_storage(path):
         images.append(Image.open(f"{path}/{file}"))
     return images
 
+def query_deliveries_per_package(options: dict, verse: DeliveryVerse):
+    if options["output"]:
+        pass
+    else:
+        query_show_deliveries_per_package(verse)
+
+def query_deliveries_per_location(options: dict, verse: DeliveryVerse):
+    if options["output"]:
+        pass
+    else:
+        query_show_deliveries_per_location(verse)
+
+def query_optimal_route(options: dict, verse: DeliveryVerse):
+    if options["output"]:
+        pass
+    else:
+        query_show_optimal_route(verse)
+        
+
 def execute_mode(options: dict):
     input_functions = {
-        "1": query_deliveries_per_location,
-        "2": query_deliveries_per_package,
+        "1": query_deliveries_per_package,
+        "2": query_deliveries_per_location,
         "3": query_optimal_route
     }
     verse = DeliveryVerse()
     images = images_from_storage(options["path"])
     parser = DeliveryParser(verse)
-    parser.detect_deliveries(images)
+    for index in range(len(images)):
+        parser.detect_deliveries(index, images[index])
     verse.build_graph()
     if options["output"]:
         pass
     else:
-        input_functions[options["query"]](verse)
+        input_functions[options["query"]](options, verse)

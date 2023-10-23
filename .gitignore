@@ -1,3 +1,8 @@
 images/
 __pycache__/
 tessdata/
+express.build/
+express.dist/
+express.onefile-build/
+
+express.exe
