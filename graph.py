@@ -26,29 +26,26 @@ class Package:
         self.dropoff_location.dropoff_packages.append(self)
 
     def __str__(self):
-        pickup = f"{self.pickup_location.location}, {self.pickup_location.region.region}"
-        dropoff = f"{self.dropoff_location.location}, {self.dropoff_location.region.region}"
-        return "│ {:^7} │ {:^8} │ {:^37} │ {:^37} │".format(*[self.mission + 1, self.package, pickup, dropoff])
-    
-class Pickup:
-    def __init__(self, package, dropoff):
+        return self.package
+
+class Task:
+    def __init__(self, package, location, task):
+        self.task = task
         self.package = package
-        self.location = package.pickup_location
+        self.location = location
         self.done = False
+
+    def __str__(self):
+        return f"{self.task} {self.package.package}"
+
+class Pickup(Task):
+    def __init__(self, package, dropoff):
+        super(Pickup, self).__init__(package, package.pickup_location, "Pick up")
         dropoff.pickup = self
 
-    def __str__(self):
-        return "│ {:^39} │ {:^8} │ {:^6} │ {:^7} │".format(*[self.package.pickup_location.location, "Pick up", self.package.package, self.package.mission + 1])
-
-class Dropoff:
+class Dropoff(Task):
     def __init__(self, package):
-        self.package = package
-        self.location = package.dropoff_location
-        self.done = False
-        self.pickup = None
-    
-    def __str__(self):
-        return "│ {:^39} │ {:^8} │ {:^6} │ {:^7} │".format(*[self.package.dropoff_location.location, "Drop off", self.package.package, self.package.mission + 1])
+        super(Dropoff, self).__init__(package, package.dropoff_location, "Drop off")
     
 class DeliveryVerse:
     def __init__(self):
