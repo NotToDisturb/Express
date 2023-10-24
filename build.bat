@@ -1,1 +1,1 @@
-python -m nuitka --onefile --follow-imports express.py --enable-plugin=tk-inter --include-data-files=tessdata/eng.traineddata=tessdata/eng.traineddata
+python -m nuitka --onefile --follow-imports express.py --enable-plugin=tk-inter --include-data-files=tessdata/eng.traineddata=tessdata/eng.traineddata --output-dir=output --output-filename=Express.exe
