@@ -1,32 +1,32 @@
 class Region:
     locations = []
 
-    def __init__(self, region: str):
-        self.region = region
+    def __init__(self, name: str):
+        self.name = name
 
 class Location:
 
-    def __init__(self, location: str, region: Region):
+    def __init__(self, name: str, region: Region):
         self.pickup_packages = []
         self.dropoff_packages = []
-        self.location = location
+        self.name = name
         self.region = region
         self.region.locations.append(self)
 
     def __str__(self):
-        return self.location
+        return self.name
 
 class Package:
-    def __init__(self, mission: int, package: str, pickup_location: Location, dropoff_location: Location):
+    def __init__(self, mission: int, name: str, pickup_location: Location, dropoff_location: Location):
         self.mission = mission
-        self.package = package
+        self.name = name
         self.pickup_location = pickup_location
         self.dropoff_location = dropoff_location
         self.pickup_location.pickup_packages.append(self)
         self.dropoff_location.dropoff_packages.append(self)
 
     def __str__(self):
-        return self.package
+        return self.name
 
 class Task:
     def __init__(self, package: Package, location: Location, task: str):
@@ -36,7 +36,7 @@ class Task:
         self.done = False
 
     def __str__(self):
-        return f"{self.task} {self.package.package}"
+        return f"{self.task} {self.package.name}"
 
 class Dropoff(Task):
     def __init__(self, package: Package):
