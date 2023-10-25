@@ -3,7 +3,7 @@ from PIL import Image
 
 from graph import DeliveryVerse
 from parsing import DeliveryParser
-from modes.queries import query_show_deliveries_per_location, query_show_deliveries_per_package, query_show_optimal_route
+import modes.queries as queries
 
 def images_from_storage(path):
     images = []
@@ -18,19 +18,19 @@ def query_deliveries_per_package(options: dict, verse: DeliveryVerse):
     if options["output"]:
         pass
     else:
-        query_show_deliveries_per_package(verse)
+        queries.query_show_deliveries_per_package(verse)
 
 def query_deliveries_per_location(options: dict, verse: DeliveryVerse):
     if options["output"]:
         pass
     else:
-        query_show_deliveries_per_location(verse)
+        queries.query_show_deliveries_per_location(verse)
 
 def query_optimal_route(options: dict, verse: DeliveryVerse):
     if options["output"]:
         pass
     else:
-        query_show_optimal_route(verse)
+        queries.query_show_optimal_route(verse)
         
 
 def execute_mode(options: dict):

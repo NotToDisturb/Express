@@ -2,7 +2,8 @@
 
 Express is developed on Python 3.8.10 using [tesserocr](https://github.com/sirfz/tesserocr) to extract contract information from the game. If you want to create new features, improve existing ones or fix bugs, you will need the following:
 - A [Python](https://www.python.org/downloads/release/python-3810/) installation
-- [tesserocr for Windows](https://github.com/sirfz/tesserocr#pip) (this will also install the other depenecy, [PIL](https://pypi.org/project/Pillow/))
+- [tabulate](https://github.com/gregbanks/python-tabulate) → `pip install tabulate`
+- [tesserocr for Windows](https://github.com/sirfz/tesserocr#pip) (this will also install other dependencies such as [Pillow](https://github.com/python-pillow/Pillow) and [numpy](https://github.com/numpy/numpy))
     - The [`eng.traineddata`](https://github.com/tesseract-ocr/tessdata/blob/main/eng.traineddata) file in the [`tessdata`](https://github.com/NotToDisturb/Express/tree/0.1/tessdata) folder
 - If you want to build standalone versions, you will need [Nuitka](https://nuitka.net/doc/download.html#pypi) (which in turn needs [Visual Studio 2022](https://nuitka.net/doc/user-manual.html#id4))
 

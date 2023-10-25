@@ -1,12 +1,12 @@
 class Region:
     locations = []
 
-    def __init__(self, region):
+    def __init__(self, region: str):
         self.region = region
 
 class Location:
 
-    def __init__(self, location, region):
+    def __init__(self, location: str, region: Region):
         self.pickup_packages = []
         self.dropoff_packages = []
         self.location = location
@@ -17,7 +17,7 @@ class Location:
         return self.location
 
 class Package:
-    def __init__(self, mission, package, pickup_location, dropoff_location):
+    def __init__(self, mission: int, package: str, pickup_location: Location, dropoff_location: Location):
         self.mission = mission
         self.package = package
         self.pickup_location = pickup_location
@@ -29,7 +29,7 @@ class Package:
         return self.package
 
 class Task:
-    def __init__(self, package, location, task):
+    def __init__(self, package: Package, location: Location, task: str):
         self.task = task
         self.package = package
         self.location = location
@@ -38,14 +38,14 @@ class Task:
     def __str__(self):
         return f"{self.task} {self.package.package}"
 
+class Dropoff(Task):
+    def __init__(self, package: Package):
+        super(Dropoff, self).__init__(package, package.dropoff_location, "Drop off")
+
 class Pickup(Task):
-    def __init__(self, package, dropoff):
+    def __init__(self, package: Package, dropoff: Dropoff):
         super(Pickup, self).__init__(package, package.pickup_location, "Pick up")
         dropoff.pickup = self
-
-class Dropoff(Task):
-    def __init__(self, package):
-        super(Dropoff, self).__init__(package, package.dropoff_location, "Drop off")
     
 class DeliveryVerse:
     def __init__(self):
@@ -103,7 +103,7 @@ class DeliveryVerse:
             self.reset_tasks()
         return results[sorted(results, key=lambda x: results[x]["distance"])[0]]["route"]
     
-    def evaluate_potential_next_tasks(self, unfulfilled, current_task, current_distance):
+    def evaluate_potential_next_tasks(self, unfulfilled: dict, current_task: Task, current_distance: int):
         for next_task in unfulfilled:
             if current_task.location == next_task.location:
                 continue
@@ -114,7 +114,7 @@ class DeliveryVerse:
             if unfulfilled[next_task] == 0 or unfulfilled[next_task] > new_distance:
                 unfulfilled[next_task] = new_distance
 
-    def evaluate_and_complete_tasks(self, unfulfilled, current_task, route):
+    def evaluate_and_complete_tasks(self, unfulfilled: dict, current_task: Task, route: list):
         delete_queue = []
         for other_task in unfulfilled.keys():
             if current_task.location == other_task.location and (isinstance(other_task, Pickup) or (isinstance(other_task, Dropoff) and other_task.pickup.done)):

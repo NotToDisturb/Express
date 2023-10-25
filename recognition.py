@@ -24,7 +24,7 @@ class DeliveryOCR:
         array.transpose((2, 0, 1)).reshape(array.shape[0], array.shape[1] * array.shape[2])
         return Image.fromarray(array, mode="RGBA")
 
-    def __crop_image(self, left_crop, top_crop, right_crop, bottom_crop):
+    def __crop_image(self, left_crop: int, top_crop: int, right_crop: int, bottom_crop: int):
         width, height = self.image.size
         cropped_image = self.image.crop((left_crop, top_crop, width - right_crop, height - bottom_crop))
         # Need to copy to new image or Tesseract throws an error

@@ -2,9 +2,9 @@ import os
 import keyboard
 from PIL import Image, ImageGrab
 
+import modes.queries as queries
 from graph import DeliveryVerse
 from parsing import DeliveryParser
-from modes.queries import query_show_deliveries_per_location, query_show_deliveries_per_package, query_show_optimal_route
 
 # TODO: Allow retake and cancel of screenshots, showing detected packages
 
@@ -31,8 +31,7 @@ def images_from_storage():
         images.append(Image.open(f"{path}/{file}"))
     return images
 
-def query_exit(verse: DeliveryVerse):
-    exit()
+
 
 def select_images():
     input_images = {
@@ -53,10 +52,10 @@ def show_queries():
 
 def select_query(verse):
     input_functions = {
-        "1": query_show_deliveries_per_package,
-        "2": query_show_deliveries_per_location,
-        "3": query_show_optimal_route,
-        "4": query_exit
+        "1": queries.query_show_deliveries_per_package,
+        "2": queries.query_show_deliveries_per_location,
+        "3": queries.query_show_optimal_route,
+        "4": queries.query_exit
     }
     print("[INPUT] What query would you like to make?")
     show_queries()

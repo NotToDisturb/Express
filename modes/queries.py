@@ -1,5 +1,6 @@
 from tabulate import tabulate
-from graph import Location, DeliveryVerse
+
+from graph import DeliveryVerse
 
 def query_show_deliveries_per_package(verse: DeliveryVerse):
     headers = ["Mission", "ID", "Pickup location", "Dropoff location"]
@@ -21,7 +22,7 @@ def query_show_deliveries_per_location(verse: DeliveryVerse):
     table = tabulate(rows, headers, tablefmt="simple_grid", numalign="center", stralign="center")
     print(f"\n{table}")
 
-def query_show_optimal_route(verse):
+def query_show_optimal_route(verse: DeliveryVerse):
     verse.build_graph()
     route = verse.get_shortest_route()
     headers = ["Location", "Task", "ID", "Mission"]
@@ -29,3 +30,6 @@ def query_show_optimal_route(verse):
              for step in route]
     table = tabulate(rows, headers, tablefmt="simple_outline", numalign="center", stralign="center")
     print(f"\n{table}")
+
+def query_exit(_: DeliveryVerse):
+    exit()
