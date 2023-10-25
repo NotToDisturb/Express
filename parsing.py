@@ -1,8 +1,5 @@
-import os
-import re
-import tesserocr
-import numpy as np
 from PIL import Image
+from recognition import DeliveryOCR
 from graph import Region, Location, Package, DeliveryVerse
 
 GENERIC_TEMPLATES = {
@@ -42,40 +39,6 @@ class DeliveryParser:
     def __init__(self, verse: DeliveryVerse):
         self.verse = verse
 
-    def prepare_image(self, image: Image):
-        width, height = image.size
-        desired_width = DESIRED_ASPECT_RATIO * height
-        excess_width = max(width - desired_width, 0)
-        cropped_image = image.crop((excess_width / 2, 0, width - excess_width / 2, int(height)))
-        array = np.array(cropped_image)
-        array[np.where((array <= [BW_THRESHOLD, BW_THRESHOLD, BW_THRESHOLD, 255]).all(axis=2))] = [0, 0, 0, 255]
-        array.transpose((2, 0, 1)).reshape(array.shape[0], array.shape[1] * array.shape[2])
-        return Image.fromarray(array, mode="RGBA")
-    
-    def crop_mission_title(self, image: Image):
-        width, height = image.size
-        left_crop = int(width / 10 * 4)
-        top_crop = int(height / 6)
-        right_crop = int(width / 14)
-        bottom_crop = int(height / 5 * 4)
-        cropped_image = image.crop((left_crop, top_crop, width - right_crop, height - bottom_crop))
-        # Need to copy to new image or Tesseract throws an error
-        new_image = Image.new("RGB", (width - left_crop - right_crop, height - top_crop - bottom_crop))
-        new_image.paste(cropped_image, (0, 0))
-        return new_image
-
-    def crop_mission_text(self, image: Image):
-        width, height = image.size
-        left_crop = int(width / 10 * 4)
-        top_crop = int(height / 2.5)
-        right_crop = int(width / 14)
-        bottom_crop = int(height / 4.5)
-        cropped_image = image.crop((left_crop, top_crop, width - right_crop, height - bottom_crop))
-        # Need to copy to new image or Tesseract throws an error
-        new_image = Image.new("RGB", (width - left_crop - right_crop, height - top_crop - bottom_crop))
-        new_image.paste(cropped_image, (0, 0))
-        return new_image
-
     def get_package_lines(self, packages_str):
         return [package_line for package_line in packages_str.split("\n") if PACKAGE_STRING in package_line]
 
@@ -102,9 +65,9 @@ class DeliveryParser:
         self.verse.locations[location_str] = self.verse.locations.get(location_str, Location(location_str, self.verse.regions[region_str]))
 
     def detect_deliveries(self, mission: int, image: Image):
-        image = self.prepare_image(image)
+        ocr = DeliveryOCR(image)
         print(f"[INFO] Processing image {mission + 1}")
-        text = tesserocr.image_to_text(self.crop_mission_text(image), path=f"{os.path.dirname(__file__)}/tessdata")
+        text = ocr.get_text("text")
         pickup_index = text.index(PICK_UP_STRING)
         dropoff_index = text.index(DROP_OFF_STRING)
         pickup_packages = text[pickup_index:dropoff_index]
