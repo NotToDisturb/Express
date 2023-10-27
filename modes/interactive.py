@@ -73,5 +73,6 @@ def execute_mode(_: dict):
     parser = DeliveryParser(verse)
     for index in range(len(images)):
         parser.detect_deliveries(index, images[index])
+        parser.detections[-1].confirm_detections()
     verse.build_graph()
     select_query(verse)

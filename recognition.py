@@ -1,41 +1,35 @@
 import os
+import sys
 import tesserocr
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps, ImageEnhance
 
 DESIRED_ASPECT_RATIO = 16/9
-BW_THRESHOLD = 190
-COMBINED_BW_THRESHOLD = 630
+BRIGHTNESS_ENHANCE = 1.3
 
 class DeliveryOCR:
     def __init__(self, image: Image):
-        self.image = self.__prepare_image(image)
-        self.__crop_mission_title().show()
-        self.__crop_mission_text().show()
+        self.image = self.__remove_background(image.convert("RGB"))
         self.texts = {
             "title": self.__get_text(self.__crop_mission_title()).replace("\n", ""),
             "text": self.__get_text(self.__crop_mission_text())
         }
     
-    def __prepare_image(self, image: Image):
+    def __remove_background(self, image: Image):
         width, height = image.size
         desired_width = DESIRED_ASPECT_RATIO * height
         excess_width = max(width - desired_width, 0)
         cropped_image = image.crop((excess_width / 2, 0, width - excess_width / 2, int(height)))
-        array = np.array(cropped_image)
-
-        hasAlpha = array.shape[2] == 4
-        threshold = COMBINED_BW_THRESHOLD + 255 if hasAlpha else 0
-        array[np.where(array.sum(axis=2) <= COMBINED_BW_THRESHOLD)] = [0, 0, 0, 255] if hasAlpha else [0, 0, 0]
-        array[np.where(array.sum(axis=2) > COMBINED_BW_THRESHOLD)] = [255, 255, 255, 255] if hasAlpha else [255, 255, 255]
-        array.transpose((2, 0, 1)).reshape(array.shape[0], array.shape[1] * array.shape[2])
-        return Image.fromarray(array, mode="RGBA" if hasAlpha else "RGB")
+        processed_image = ImageOps.posterize(cropped_image, 3).convert("L")
+        processed_image = ImageOps.posterize(processed_image, 2)
+        enhancer = ImageEnhance.Brightness(processed_image)
+        return enhancer.enhance(BRIGHTNESS_ENHANCE)
 
     def __crop_image(self, left_crop: int, top_crop: int, right_crop: int, bottom_crop: int):
         width, height = self.image.size
         cropped_image = self.image.crop((left_crop, top_crop, width - right_crop, height - bottom_crop))
         # Need to copy to new image or Tesseract throws an error
-        new_image = Image.new("RGB", (width - left_crop - right_crop, height - top_crop - bottom_crop))
+        new_image = Image.new("L", (width - left_crop - right_crop, height - top_crop - bottom_crop))
         new_image.paste(cropped_image, (0, 0))
         return new_image
 
