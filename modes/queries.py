@@ -1,6 +1,16 @@
 from tabulate import tabulate
 
 from graph import DeliveryVerse
+from parsing import DeliveryDetections
+
+def query_show_detected_packages(detections: DeliveryDetections, index: int):
+    headers = ["Mission", "ID", "Pickup location", "Dropoff location"]
+    rows = [(index + 1, package.name, 
+             f"{package.pickup_location.name}, {package.pickup_location.region}",
+             f"{package.dropoff_location.name}, {package.dropoff_location.region}")
+             for package in detections.packages.values()]
+    table = tabulate(rows, headers, tablefmt="simple_outline", numalign="center", stralign="center")
+    print(f"{table}")
 
 def query_show_deliveries_per_package(verse: DeliveryVerse):
     headers = ["Mission", "ID", "Pickup location", "Dropoff location"]
